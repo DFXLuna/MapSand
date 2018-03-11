@@ -31,11 +31,11 @@ public class MeshCombiner : MonoBehaviour {
 		meshes[2].transform = bmf[1].transform.localToWorldMatrix;
 
 		// Then deactive the building
-		// foreach( Transform child in tile.transform ){
-		// 	if( child.gameObject.name == "building" ){
-		// 		child.gameObject.SetActive( false );
-		// 	}
-		// }
+		foreach( Transform child in tile.transform ){
+			if( child.gameObject.name == "building" ){
+				child.gameObject.SetActive( false );
+			}
+		}
 
 		meshHolder = new Mesh();
 		meshHolder.CombineMeshes( meshes, true );

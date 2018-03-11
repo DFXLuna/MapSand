@@ -36,8 +36,6 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-/Project_Anvil/.vscode/
-
-/Project_Anvil/.vs/
+.vscode/
 
 
