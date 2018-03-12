@@ -5,7 +5,8 @@ using UnityEngine;
 public class AddNavMeshSourceTag : MonoBehaviour {
 	
     void Start(){
-        Debug.Log( "Adding NavMeshSourceTag to " + transform.parent.gameObject.name );
-        transform.parent.gameObject.AddComponent<NavMeshSourceTag>();
+        if( gameObject.GetComponentInParent<NavMeshSourceTag>() == null ){
+            transform.parent.gameObject.AddComponent<NavMeshSourceTag>();
+        }
     }
 }

@@ -1,46 +1,40 @@
-﻿// Modified from Erik Nordeau's Mesh Combiner 
-// http://www.habrador.com/tutorials/unity-mesh-combining-tutorial/3-combine-meshes-colors/
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MeshCombiner : MonoBehaviour {
-	Mesh meshHolder;
-	// This takes a map tile and combines its mesh with
-	// its merged building child. THIS MUST BE CHANGED IF
-	// THE BUILDING STACK IS CHANGED TO A NONMERGING
-	// BUILDING STACK
-	// This is currently a destructive process. It can be changed if needed
+	
 	public void ApplyToMapTile( GameObject tile ){
-		Debug.Log( "Applying to " + tile.name );
-		CombineInstance[] meshes = new CombineInstance[3];
-		
-		// grab tile mesh
-		MeshFilter tmf = tile.GetComponent<MeshFilter>();
-		
-		meshes[0].mesh = tmf.mesh;
-		meshes[0].transform = tmf.transform.localToWorldMatrix;
+		MeshFilter[] mf = tile.GetComponentsInChildren<MeshFilter>();
+		int nMeshes = mf.Length;
+		CombineInstance[] meshes = new CombineInstance[ nMeshes ];
+		for( int i = 0; i < nMeshes; i++ ){
+			Mesh currMesh = mf[i].mesh;
+			meshes[i].mesh = new Mesh();
+			meshes[i].mesh.vertices = currMesh.vertices;
+			meshes[i].mesh.triangles = currMesh.triangles;
+			meshes[i].mesh.uv = currMesh.uv;
+			meshes[i].mesh.normals = currMesh.normals;
+			meshes[i].mesh.colors = currMesh.colors;
+			meshes[i].mesh.tangents = currMesh.tangents;
+			meshes[i].transform = mf[i].transform.localToWorldMatrix;
+			Debug.Log("Transform: " + meshes[i].transform );
 
-		// grab building mesh
-		MeshFilter[] bmf = tile.GetComponentsInChildren<MeshFilter>( true );
-
-		meshes[1].mesh = bmf[0].mesh;
-		meshes[1].transform = bmf[0].transform.localToWorldMatrix;
-		meshes[2].mesh = bmf[1].mesh;
-		meshes[2].transform = bmf[1].transform.localToWorldMatrix;
-
-		// Then deactive the building
-		foreach( Transform child in tile.transform ){
-			if( child.gameObject.name == "building" ){
-				child.gameObject.SetActive( false );
-			}
 		}
+		GameObject test = new GameObject();
+		test.name = "TEST";
+		test.AddComponent<MeshRenderer>();
 
-		meshHolder = new Mesh();
-		meshHolder.CombineMeshes( meshes, true );
-		tile.GetComponent<MeshFilter>().mesh = meshHolder;
+		//test.GetComponent<MeshRenderer>().material = tile.GetComponent<MeshRenderer>().material;
+		test.GetComponent<MeshRenderer>().enabled = false;
+		test.AddComponent<MeshFilter>();
+		//test.GetComponent<MeshFilter>().mesh = meshes[1].mesh;
+		//test.GetComponent<MeshFilter>().mesh = new Mesh();
+		test.GetComponent<MeshFilter>().mesh.CombineMeshes( meshes, true );
+		test.AddComponent<NavMeshSourceTag>();
 
 	}
+
+
 	
 }
